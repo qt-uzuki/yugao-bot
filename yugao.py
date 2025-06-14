@@ -85,10 +85,7 @@ GIF_TAGS = [
     "akaz123", "tosca", "aniflow", "ntrsan_(artist)", "darkalx", "faiart",
     "optimystic", "xtremetoons", "salmon_knight", "ghost141000", "eroticgeek2",
     "desto", "moonshades_(artist)", "pinku.ai", "pinku", "juanpiamvs", "isogil",
-    "toorudraws", "truevovan", "koikoi", "artkoikoi", "narutofillers", "nyxworks",
-    "noxdsa", "ai-kun", "darkcry", "borutozai", "studio_oppai", "animanghayodraw",
-    "lickliking", "giga", "nanxdaime", "darkuro_27", "lyumus", "espectroh", "afw",
-    "sheong_wong", "doudoroquian", "awesomegio", "rejiice", "neeba", "angelyeah",
+    "doudoroquian", "awesomegio", "rejiice", "neeba", "angelyeah",
     "mandio_art", "hal_(sakurajam)", "execro", "artyum99", "shiroi_nezumi",
     "torikku95", "leinadxxx", "reserexerion", "agung911", "d-art", "wpixxx(artist)",
     "tekstelart",
@@ -987,13 +984,5 @@ async def main():
             aiohttp_session = None
 
 if __name__ == '__main__':
-    try:
-        import nest_asyncio
-        nest_asyncio.apply()
-    except ImportError:
-        pass
-    loop = asyncio.get_event_loop()
-    if loop.is_running():
-        asyncio.ensure_future(main())
-    else:
-        loop.run_until_complete(main())
+    # Use asyncio.run to avoid “event loop already running” errors.
+    asyncio.run(main())
