@@ -85,7 +85,10 @@ GIF_TAGS = [
     "akaz123", "tosca", "aniflow", "ntrsan_(artist)", "darkalx", "faiart",
     "optimystic", "xtremetoons", "salmon_knight", "ghost141000", "eroticgeek2",
     "desto", "moonshades_(artist)", "pinku.ai", "pinku", "juanpiamvs", "isogil",
-    "doudoroquian", "awesomegio", "rejiice", "neeba", "angelyeah",
+    "toorudraws", "truevovan", "koikoi", "artkoikoi", "narutofillers", "nyxworks",
+    "noxdsa", "ai-kun", "darkcry", "borutozai", "studio_oppai", "animanghayodraw",
+    "lickliking", "giga", "nanxdaime", "darkuro_27", "lyumus", "espectroh", "afw",
+    "sheong_wong", "doudoroquian", "awesomegio", "rejiice", "neeba", "angelyeah",
     "mandio_art", "hal_(sakurajam)", "execro", "artyum99", "shiroi_nezumi",
     "torikku95", "leinadxxx", "reserexerion", "agung911", "d-art", "wpixxx(artist)",
     "tekstelart",
@@ -145,6 +148,7 @@ def send_action(action):
 
 # ====== Helper: Clean Rule34 Tag ======
 def clean_rule34_tag(raw_tag: str) -> str:
+    # Remove parentheses, replace dots/spaces, lower-case
     t = re.sub(r'.*?', '', raw_tag)
     t = t.replace('.', '_').replace(' ', '_')
     t = t.strip(' _')
@@ -975,14 +979,26 @@ async def main():
 
     logger.info("💞 WaifuBot is now running.")
 
-    # 5. Run polling and ensure aiohttp session closed afterwards
-    try:
-        await app.run_polling()
-    finally:
-        if aiohttp_session:
-            await aiohttp_session.close()
-            aiohttp_session = None
+    # 5. Instead of run_polling(), manually initialize/start/poll/idling
+    # Initialize and start
+    await app.initialize()
+    await app.start()
+    # Start polling
+    await app.updater.start_polling()
+
+    # Idle until Ctrl+C or termination
+    await app.idle()
+
+    # Shutdown sequence
+    await app.updater.stop_polling()
+    await app.stop()
+    await app.shutdown()
+
+    # 6. Close aiohttp session
+    if aiohttp_session:
+        await aiohttp_session.close()
+        aiohttp_session = None
 
 if __name__ == '__main__':
-    # Use asyncio.run to avoid “event loop already running” errors.
+    # Use asyncio.run to start main in a fresh loop, avoiding "event loop already running"
     asyncio.run(main())
