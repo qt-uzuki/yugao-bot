@@ -342,6 +342,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
 
     user_mention = f'<a href="tg://user?id={user.id}">{user.first_name}</a>'
+    # Send typing action
     await bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
 
     keyboard = [
@@ -432,7 +433,7 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # ====== Register Handlers ======
 def register_category_handlers(app):
-    # SFW handlers: no typing decorator here
+    # SFW handlers: no typing decorator here (the decorator is still on /start and /help)
     for category in SFW_CATEGORIES:
         async def handler(update: Update, context: ContextTypes.DEFAULT_TYPE, cat=category):
             bot = context.bot
@@ -979,26 +980,34 @@ async def main():
 
     logger.info("💞 WaifuBot is now running.")
 
-    # 5. Instead of run_polling(), manually initialize/start/poll/idling
-    # Initialize and start
+    # 5. Initialize and start application
     await app.initialize()
     await app.start()
-    # Start polling
+
+    # 6. Start polling
     await app.updater.start_polling()
 
-    # Idle until Ctrl+C or termination
-    await app.idle()
+    # 7. Block forever until cancelled (SIGINT/SIGTERM)
+    stop_event = asyncio.Event()
+    try:
+        await stop_event.wait()
+    except asyncio.CancelledError:
+        pass
 
-    # Shutdown sequence
+    # 8. Shutdown sequence
+    logger.info("Shutting down bot...")
     await app.updater.stop_polling()
     await app.stop()
     await app.shutdown()
 
-    # 6. Close aiohttp session
+    # 9. Close aiohttp session
     if aiohttp_session:
         await aiohttp_session.close()
         aiohttp_session = None
 
 if __name__ == '__main__':
-    # Use asyncio.run to start main in a fresh loop, avoiding "event loop already running"
-    asyncio.run(main())
+    # Use asyncio.run to start main in a fresh loop
+    try:
+        asyncio.run(main())
+    except (KeyboardInterrupt, SystemExit):
+        pass
