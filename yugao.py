@@ -334,17 +334,20 @@ GIF_WORKERS = 5
 PHOTO_WORKERS = 5
 NSFW_WORKERS = 5
 
-# ====== /start Command Handler ======
+# ====== /start Command Handler (Yugao Uzuki style) ======
 @send_action(ChatAction.TYPING)
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     bot = context.bot
     chat_id = update.effective_chat.id
     user = update.effective_user
 
+    # Mention the user
     user_mention = f'<a href="tg://user?id={user.id}">{user.first_name}</a>'
+
     # Send typing action
     await bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
 
+    # Keyboard buttons
     keyboard = [
         [
             InlineKeyboardButton('Updates', url=CHANNEL_LINK),
@@ -356,12 +359,13 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
 
+    # Welcome text in first-person as Yugao Uzuki
     welcome_text = (
-        f"<b>👋 Hello {user_mention}, welcome to WaifuBot!</b>\n\n"
-        "Your anime image companion with 35+ commands across a wide range of categories.\n\n"
-        "• Use <b>/help</b> to discover all available commands.\n"
-        "• Works in private chats and groups, always ready to serve anime goodness.\n\n"
-        "💞 Add me to your group and explore all the commands together with friends!"
+        f"<b>👋 Hello {user_mention}, I’m Yugao Uzuki!</b>\n\n"
+        "<i>Your gentle anime companion, ready to share lovely images whenever you wish.</i>\n\n"
+        "• Send <b>/help</b> to see all my commands.\n"
+        "• I work in private chats or groups—always here to brighten your day.\n\n"
+        "<b>💞 Invite me to your group so we can enjoy together!</b>"
     )
 
     await update.message.reply_text(
@@ -371,57 +375,68 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         disable_web_page_preview=True
     )
 
-# ====== /help Command Handler ======
+# ====== /help Command Handler (Yugao Uzuki voice, formatted) ======
 @send_action(ChatAction.TYPING)
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     bot = context.bot
     chat_id = update.effective_chat.id
+    # Send typing indicator
     await bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
 
+    # Short, cute descriptions with emojis; first four made shorter
     sfw_descs = {
-        'waifu': "Random waifu image",
-        'neko': "Random catgirl image",
-        'shinobu': "Shinobu-themed image",
-        'megumin': "Megumin-themed image",
-        'bully': "Bully expression image",
-        'cuddle': "Cuddle / affectionate image",
-        'cry': "Tearful / emotional image",
-        'hug': "Hug-themed image",
-        'awoo': "Awoo expression",
-        'kiss': "Kiss-themed image",
-        'lick': "Licking-themed image",
-        'pat': "Head pat image",
-        'smug': "Smug expression image",
-        'bonk': "Bonk-style image",
-        'yeet': "Yeet / throw-themed image",
-        'blush': "Blushing character image",
-        'smile': "Smiling character image",
-        'wave': "Waving character image",
-        'highfive': "High-five image",
-        'handhold': "Holding hands image",
-        'nom': "Eating-themed image",
-        'bite': "Playful bite image",
-        'slap': "Slap-themed image",
-        'kill': "Dramatic kill-themed image",
-        'kick': "Kick-themed image",
-        'happy': "Happy moment image",
-        'wink': "Wink-themed image",
-        'poke': "Poke-themed image",
-        'dance': "Dance-themed image",
-        'cringe': "Cringe reaction image"
+        'waifu': "💖 Cute waifu",
+        'neko': "🐾 Catgirl",
+        'shinobu': "🍩 Shinobu",
+        'megumin': "💥 Megumin",
+        'bully': "😈 Playful tease",
+        'cuddle': "🤗 Warm cuddle",
+        'cry': "😢 Emotional tears",
+        'hug': "🤗 Gentle hug",
+        'awoo': "🐺 Awoo",
+        'kiss': "😘 Soft kiss",
+        'lick': "👅 Playful lick",
+        'pat': "🐾 Gentle pat",
+        'smug': "😉 Cheeky smirk",
+        'bonk': "🔨 Fun bonk",
+        'yeet': "🌀 Yeet energy",
+        'blush': "😊 Shy blush",
+        'smile': "😄 Bright smile",
+        'wave': "👋 Friendly wave",
+        'highfive': "✋ High-five",
+        'handhold': "🤝 Holding hands",
+        'nom': "🍴 Yummy nom",
+        'bite': "🦷 Playful bite",
+        'slap': "👊 Dramatic slap",
+        'kill': "💀 Intense scene",
+        'kick': "👢 Strong kick",
+        'happy': "😁 Joyful moment",
+        'wink': "😉 Sweet wink",
+        'poke': "👆 Gentle poke",
+        'dance': "💃 Happy dance",
+        'cringe': "😅 Funny cringe"
     }
 
+    # Build help text in first-person as Yugao Uzuki, using formatting
     help_lines = [
-        "<b>📖 WaifuBot Commands</b>",
+        "<b>📖 Yugao Uzuki Commands</b>",
         "",
-        "Use any of the commands below to receive a random anime image:",
+        "<i>Konnichiwa~ I’m <b>Yugao Uzuki</b>, here to share lovely anime images with you! 🌸</i>",
+        "<i>Send one of these commands and I’ll pick something special:</i>",
+        ""
     ]
-    help_lines.append("\n".join(f"• /{cmd} — {desc}" for cmd, desc in sfw_descs.items()))
-    help_lines.append("")  # blank line
-    help_lines.append("• Add the bot to groups to allow these commands in chats.")
-    help_lines.append("• All commands work in private chats as well.")
-    help_lines.append("")
-    help_lines.append("Enjoy the anime vibes! 🎉")
+    # List SFW commands with mono for command, bold description
+    for cmd, desc in sfw_descs.items():
+        help_lines.append(f"• <code>/{cmd}</code> — <b>{desc}</b>")
+
+    # Notes in her style (unchanged)
+    help_lines += [
+        "",
+        "<i>🤝 Invite me to your group so friends can enjoy together.</i>",
+        "<i>📩 Or chat with me privately—I'm always here for you.</i>",
+        "",
+        "<b>May your heart be at ease with these images… Enjoy! 💞</b>"
+    ]
 
     help_text = "\n".join(help_lines)
 
@@ -527,7 +542,7 @@ def register_category_handlers(app):
         try:
             nsfw_queue.put_nowait(job)
         except asyncio.QueueFull:
-            await update.message.reply_text("⚠️ Busy right now. Please try again later.")
+            await update.message.reply_text("❤️‍🩹 Busy right now. Please try again later.")
 
     app.add_handler(CommandHandler('nsfw', nsfw_handler))
 
@@ -543,7 +558,7 @@ def register_category_handlers(app):
         try:
             gif_queue.put_nowait(job)
         except asyncio.QueueFull:
-            await update.message.reply_text("⚠️ Busy right now. Please try again later.")
+            await update.message.reply_text("❤️‍🩹 Busy right now. Please try again later.")
 
     app.add_handler(CommandHandler('gif', gif_handler))
 
@@ -559,7 +574,7 @@ def register_category_handlers(app):
         try:
             photo_queue.put_nowait(job)
         except asyncio.QueueFull:
-            await update.message.reply_text("⚠️ Busy right now. Please try again later.")
+            await update.message.reply_text("❤️‍🩹 Busy right now. Please try again later.")
 
     app.add_handler(CommandHandler('photo', photo_handler))
 
@@ -575,7 +590,7 @@ def register_category_handlers(app):
         try:
             video_queue.put_nowait(job)
         except asyncio.QueueFull:
-            await update.message.reply_text("⚠️ Busy right now. Please try again later.")
+            await update.message.reply_text("❤️‍🩹 Busy right now. Please try again later.")
 
     app.add_handler(CommandHandler('video', video_handler))
 
@@ -978,7 +993,7 @@ async def main():
     for _ in range(VIDEO_WORKERS):
         asyncio.create_task(video_worker())
 
-    logger.info("💞 WaifuBot is now running.")
+    logger.info("💞 Yugao Uzuki baby is now running.")
 
     # 5. Initialize and start application
     await app.initialize()
